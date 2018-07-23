@@ -1,0 +1,38 @@
+[
+    {
+        "name":"Toby-san",
+        "breed":"Shih-Tzu",
+        "sex":"Male",
+        "shots":true,
+        "age":4,
+        "size":"Small",
+        "licensed":true,
+        "neutered":true,
+        "owner":"James Morris",
+        "notes":"Lipsum"
+    },
+    {
+        "name":"Lulu",
+        "breed":"Australian Shepherd",
+        "sex":"Female",
+        "shots":true,
+        "age":1,
+        "size":"Medium",
+        "licensed":true,
+        "neutered":false,
+        "owner":"Trevor Miller",
+        "notes":"A cute doggo."
+    },
+    {
+        "name":"Rascal",
+        "breed":"Miniature Schnauzer",
+        "sex":"Male",
+        "shots":true,
+        "age":8,
+        "size":"Small",
+        "licensed":true,
+        "neutered":true,
+        "owner":"Branson Linde",
+        "notes":"A vicious mutt."
+    }
+]
