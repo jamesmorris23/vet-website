@@ -4,9 +4,9 @@ $(document).ready(function() {
 });
 
 function renderPage() {
-    $.getJSON("../js/exotic.json", function(returnData) {
+    $.getJSON("../api/exotics.php", function(returnData) {
         exoticsArray = returnData;
-        updateTable();
+        updatePaginatedTable(exoticsArray);
     })
 
     $("#nameFilter").keypress(_.debounce(nameFilter, 500));
@@ -22,24 +22,62 @@ function renderPage() {
     $("#noteHeader").click(noteSort);*/
 }
 
+function updatePaginatedTable(inputArray) {
+    $('#pagination-widget').twbsPagination('destroy');
+    $('#pagination-widget').twbsPagination({
+        totalPages : Math.ceil(inputArray.length / 10),
+        visiblePages : 5,
+        onPageClick : function(event, page) {
+            let offset = (page - 1) * 10;
+            let paginatedArray = inputArray.slice(offset, offset+9);
+            updateTable(paginatedArray);
+        }
+    });
+}
+
 function updateTable(inputArray=exoticsArray) {
     var exotics = [];
 
     for(let exotic of inputArray){
+        let birth = new Date(exotic["age"]);
+        let dif = Date.now() - birth.getTime();
+        let ageDate = new Date(dif);
+        let age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
         exotics.push("<tr><th>"+exotic["name"]+
         "</th><td>"+exotic["species"]+
         "</td><td>"+exotic["sex"]+
-        "</td><td>"+exotic["age"]+
+        "</td><td>"+age+
         "</td><td data-toggle=\"modal\" data-target=\"#ownerModal\" class=\"clickable\">"+exotic["owner"]+
-        "</td><td data-toggle=\"modal\" data-target=\"#noteModal\" class=\"clickable\">"+exotic["notes"]+
+        "</td><td data-toggle=\"modal\" data-target=\"#noteModal\" class=\"clickable\" onclick=\"updateNoteModal(this)\" id=\"" + exotic["id"] + "\">"+"Click here to see notes."+
         "</td><td></tr>");
     }
 
     var tableHTML = exotics.join("");
-    tableHTML = tableHTML.replace(/true/g,"<img src=\"../assets/yesCheck.png\" class=\"icon\" name=\"Yes\">");
-    tableHTML = tableHTML.replace(/false/g,"<img src=\"../assets/noX.png\" class=\"icon\" name=\"Yes\">");
-
     $("#exoticTable").html(tableHTML);
+}
+
+function updateNoteModal(elementPassed) {
+    let animalID = elementPassed.id;
+    let noteBody = document.getElementById("note-modal-body");
+    noteBody.innerHTML = "";
+    let generatedHTML = "";
+    let counter = 1;
+    
+    $.getJSON(`../api/notes.php?animal=exotic&id=${animalID}`, function(returnNotes) {
+        for (let note of returnNotes) {
+            let rowHTML = `<h4>Note ${counter}: ${note["date"]} | ${note["vetName"]}</h4>
+                        <i>${note["note"]}</i>
+                        <hr>`;
+            generatedHTML += rowHTML;
+            counter += 1;
+        }
+        if (generatedHTML=="") {
+            generatedHTML="<h3>No notes left.</h3>";
+        }
+
+        noteBody.innerHTML = generatedHTML;
+    });
 }
 
 /* Filter functions */
@@ -49,7 +87,7 @@ function nameFilter() {
     var filteredArray = exoticsArray.filter(function(exotic){
         return exotic.name.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 function speciesFilter() {
@@ -57,7 +95,7 @@ function speciesFilter() {
     var filteredArray = exoticsArray.filter(function(exotic){
         return exotic.species.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 function ownerFilter() {
@@ -65,7 +103,7 @@ function ownerFilter() {
     var filteredArray = exoticsArray.filter(function(exotic){
         return exotic.owner.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 function noteFilter() {
@@ -73,7 +111,7 @@ function noteFilter() {
     var filteredArray = exoticsArray.filter(function(exotic){
         return exotic.notes.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 /* Sorting functions */
@@ -87,7 +125,7 @@ function nameSort() {
         return result;
     })
     if (descendingName) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
     
     descendingName = !descendingName;
 
@@ -106,7 +144,7 @@ function speciesSort() {
         return 0;
     })
     if (descendingSpecies) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingSpecies = !descendingSpecies;
     if (descendingSpecies) {
@@ -124,7 +162,7 @@ function sexSort() {
         return 0;
     })
     if (descendingSex) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingSex = !descendingSex
     if (descendingSex) {
@@ -140,7 +178,7 @@ function ageSort() {
         return a.age - b.age;
     })
     if (descendingAge) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingAge = !descendingAge;
     if (descendingAge) {
@@ -158,7 +196,7 @@ function ownerSort() {
         return 0;
     })
     if (descendingOwner) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingOwner = !descendingOwner;
     if (descendingOwner) {
@@ -176,7 +214,7 @@ function noteSort() {
         return 0;
     })
     if (descendingNote) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingNote = !descendingNote;
     if (descendingNote) {

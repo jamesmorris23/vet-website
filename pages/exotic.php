@@ -26,38 +26,18 @@
                     <th scope="col" id="speciesHeader" title="The species of the animal specified by the owner (verified on first visit)."><input class="form-control form-control-sm" type="text" placeholder="Filter"> <br> Species</th>
                     <th scope="col" id="sexHeader" title="The sex of the animal (verified on first visit).">Sex</th>
                     <th scope="col" id="ageHeader" title="The age indicated by the animal's owner. If unknown, a best guess is given.">Age</th>
-                    <th scope="col" id="ownerHeader" title="Indicates the name of the owner(s) as specified on the animals intake sheet."><input class="form-control form-control-sm" type="text" placeholder="Filter"> <br> Owner(s)</th>
-                    <th scope="col" id="noteHeader" title="Any notes we have left while the animal has been seen in our practice."><input class="form-control form-control-sm" type="text" placeholder="Filter"> <br> Notes</th>
+                    <th scope="col" id="ownerHeader" title="Indicates the name of the owner(s) as specified on the animals intake sheet."><!--<input class="form-control form-control-sm" type="text" placeholder="Filter"> --><br> Owner(s)</th>
+                    <th scope="col" id="noteHeader" title="Any notes we have left while the animal has been seen in our practice."><!--<input class="form-control form-control-sm" type="text" placeholder="Filter">--> <br> Notes</th>
                 </tr>
             </thead>
             <tbody id="exoticTable">
                 <!--TODO: Replace with actual data via javascript -->
                 <tr>
-                    <th>Toby</th>
-                    <td>Lizard</td>
-                    <td>Male</td>
-                    <td>4</td>
-                    <td>James Morris</td>
-                    <td>Lipsum</td>
-                </tr>
-                <tr>
-                    <th>Lulu</td>
-                    <td>Iguana</td>
-                    <td>Female</td>
-                    <td>1</td>
-                    <td>Trevor Miller</td>
-                    <td>Lipsum</td>
-                </tr>
-                <tr>
-                    <th>Rascal</th>
-                    <td>Gecko</td>
-                    <td>Male</td>
-                    <td>8</td>
-                    <td>Branson Linde</td>
-                    <td>Lipsum</td>
+                    <th>Loading...</th>
                 </tr>
             </tbody>
         </table>
+        <ul id="pagination-widget" class="pagination-med justify-content-center"></ul>
 
         <hr>
 
@@ -66,43 +46,7 @@
         </footer>
     </div>
 
-    <div class="modal fade" id="ownerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      This hasn't been implemented yet, but will show details about the owner!
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          This hasn't been implemented yet, but will show details about the notes!
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <?php include("modals.php"); ?>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -110,5 +54,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <script src="../js/exotic.js"></script>
+    <script src="../js/jquery.twbsPagination.min.js"></script>
   </body>
 </html>

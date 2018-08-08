@@ -14,7 +14,7 @@
   <body>
     <!-- Navigation bar -->
     <?php
-        include 'navbarPublic.php';
+        include 'navbarAdmin.php';
     ?>
     <br><br>
     <div class="container">

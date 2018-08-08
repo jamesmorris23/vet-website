@@ -4,9 +4,9 @@ $(document).ready(function() {
 });
 
 function renderPage() {
-    $.getJSON("../js/cats.json", function(returnData) {
+    $.getJSON("../api/cats.php", function(returnData) {
         catsArray = returnData;
-        updateTable();
+        updatePaginatedTable(catsArray);
     })
 
     $("#nameFilter").keypress(_.debounce(nameFilter, 500));
@@ -22,27 +22,101 @@ function renderPage() {
     $("#noteHeader").click(noteSort);
 }
 
+function updatePaginatedTable(inputArray) {
+    $('#pagination-widget').twbsPagination('destroy');
+    $('#pagination-widget').twbsPagination({
+        totalPages : Math.ceil(inputArray.length / 10),
+        visiblePages : 5,
+        onPageClick : function(event, page) {
+            let offset = (page - 1) * 10;
+            let paginatedArray = inputArray.slice(offset, offset+9);
+            updateTable(paginatedArray);
+        }
+    });
+}
+
 function updateTable(inputArray=catsArray) {
     var cats = [];
+    var checkboxHTML = "<img src=\"../assets/yesCheck.png\" class=\"icon\" name=\"Yes\">"
+    var exHTML = "<img src=\"../assets/noX.png\" class=\"icon\" name=\"Yes\">"
 
     for(let cat of inputArray){
+        let shots = checkboxHTML;
+        let declawed = checkboxHTML;
+        let neutered = checkboxHTML;
+
+        if (cat["declawed"]==0) declawed = exHTML;
+        if (cat["shots"]==0) shots = exHTML;
+        if (cat["neutered"]==0) neutered = exHTML;
+
+        let birth = new Date(cat["age"]);
+        let dif = Date.now() - birth.getTime();
+        let ageDate = new Date(dif);
+        let age = Math.abs(ageDate.getUTCFullYear() - 1970);
+
         cats.push("<tr><th>"+cat["name"]+
         "</th><td>"+cat["breed"]+
         "</td><td>"+cat["sex"]+
-        "</td><td>"+cat["shots"]+
-        "</td><td>"+cat["age"]+
-        "</td><td>"+cat["declawed"]+
-        "</td><td>"+cat["neutered"]+
+        "</td><td>"+shots+
+        "</td><td>"+age+
+        "</td><td>"+declawed+
+        "</td><td>"+neutered+
         "</td><td data-toggle=\"modal\" data-target=\"#ownerModal\" class=\"clickable\">"+cat["owner"]+
-        "</td><td data-toggle=\"modal\" data-target=\"#noteModal\" class=\"clickable\">"+cat["notes"]+
+        "</td><td data-toggle=\"modal\" data-target=\"#noteModal\" class=\"clickable\" onclick=\"updateNoteModal(this)\" id=\"" + cat["id"] + "\">"+"Click to see notes"+
         "</td><td></tr>");
     }
 
     var tableHTML = cats.join("");
-    tableHTML = tableHTML.replace(/true/g,"<img src=\"../assets/yesCheck.png\" class=\"icon\" name=\"Yes\">");
-    tableHTML = tableHTML.replace(/false/g,"<img src=\"../assets/noX.png\" class=\"icon\" name=\"Yes\">");
+    //tableHTML = tableHTML.replace(/true/g,"<img src=\"../assets/yesCheck.png\" class=\"icon\" name=\"Yes\">");
+    //tableHTML = tableHTML.replace(/false/g,"<img src=\"../assets/noX.png\" class=\"icon\" name=\"Yes\">");
 
     $("#catTable").html(tableHTML);
+}
+
+function updateNoteModal(elementPassed) {
+    let animalID = elementPassed.id;
+    let noteBody = document.getElementById("note-modal-body");
+    noteBody.innerHTML = "";
+    let generatedHTML = "";
+    let counter = 1;
+    
+    $.getJSON(`../api/notes.php?animal=cat&id=${animalID}`, function(returnNotes) {
+        for (let note of returnNotes) {
+            let rowHTML = `<h4>Note ${counter}: ${note["date"]} | ${note["vetName"]}</h4>
+                        <i>${note["note"]}</i>
+                        <hr>`;
+            generatedHTML += rowHTML;
+            counter += 1;
+        }
+        if (generatedHTML=="") {
+            generatedHTML="<h3>No notes left.</h3>";
+        }
+
+        noteBody.innerHTML = generatedHTML;
+    });
+}
+
+function updateOwnerModal(elementPassed) {
+    let animalID = elementPassed.id;
+    let noteBody = document.getElementById("owner-modal-body");
+    noteBody.innerHTML = "";
+    let generatedHTML = "";
+    let counter = 1;
+
+    $.getJSON(`../api/notes.php?animal=cat&id=${animalID}&ownerNotes=true`), function(returnNotes) {
+        for (let note of returnNotes) {
+            let rowHTML = `<h4>Note ${counter}: ${note["date"]} | ${note["vetName"]}</h4>
+                        <i>${note["note"]}</i>
+                        <hr>`;
+            generatedHTML += rowHTML;
+            counter += 1;
+        }
+        if (generatedHTML=="") {
+            generatedHTML="<h3>No notes left.</h3>";
+        }
+
+        noteBody.innerHTML = generatedHTML;
+    }
 }
 
 /* Filter functions */
@@ -52,7 +126,7 @@ function nameFilter() {
     var filteredArray = catsArray.filter(function(cat){
         return cat.name.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 function breedFilter() {
@@ -60,7 +134,7 @@ function breedFilter() {
     var filteredArray = catsArray.filter(function(cat){
         return cat.breed.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 function ownerFilter() {
@@ -68,7 +142,7 @@ function ownerFilter() {
     var filteredArray = catsArray.filter(function(cat){
         return cat.owner.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 function noteFilter() {
@@ -76,7 +150,7 @@ function noteFilter() {
     var filteredArray = catsArray.filter(function(cat){
         return cat.notes.toLowerCase().startsWith(token);
     });
-    updateTable(filteredArray);
+    updatePaginatedTable(filteredArray);
 }
 
 /* Sorting functions */
@@ -84,13 +158,12 @@ function noteFilter() {
 function nameSort() {
     var sortedArray = catsArray.sort(function(a, b){
         var result;
-        if (a.name.toLowerCase() < b.name.toLowerCase()) result = -1;
-        if (a.name.toLowerCase() > b.name.toLowerCase()) result = 1;
-        else result = 0;
-        return result;
+        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+        return 0;
     })
     if (descendingName) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
     
     descendingName = !descendingName;
 
@@ -109,7 +182,7 @@ function speciesSort() {
         return 0;
     })
     if (descendingSpecies) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingSpecies = !descendingSpecies;
     if (descendingSpecies) {
@@ -127,7 +200,7 @@ function sexSort() {
         return 0;
     })
     if (descendingSex) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingSex = !descendingSex
     if (descendingSex) {
@@ -143,7 +216,7 @@ function ageSort() {
         return a.age - b.age;
     })
     if (descendingAge) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingAge = !descendingAge;
     if (descendingAge) {
@@ -161,7 +234,7 @@ function ownerSort() {
         return 0;
     })
     if (descendingOwner) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingOwner = !descendingOwner;
     if (descendingOwner) {
@@ -179,7 +252,7 @@ function noteSort() {
         return 0;
     })
     if (descendingNote) sortedArray = sortedArray.reverse();
-    updateTable(sortedArray);
+    updatePaginatedTable(sortedArray);
 
     descendingNote = !descendingNote;
     if (descendingNote) {

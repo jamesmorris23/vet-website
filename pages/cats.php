@@ -36,40 +36,11 @@
             <tbody id="catTable">
                 <!--TODO: Replace with actual data via javascript -->
                 <tr>
-                    <th>Toby</th>
-                    <td>British Shorthair</td>
-                    <td>Male</td>
-                    <td>Yes</td>
-                    <td>4</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>James Morris</td>
-                    <td>Lipsum</td>
-                </tr>
-                <tr>
-                    <th>Lulu</td>
-                    <td>Persian</td>
-                    <td>Female</td>
-                    <td>Yes</td>
-                    <td>1</td>
-                    <td>Yes</td>
-                    <td>No</td>
-                    <td>Trevor Miller</td>
-                    <td>Lipsum</td>
-                </tr>
-                <tr>
-                    <th>Rascal</th>
-                    <td>Siamese</td>
-                    <td>Male</td>
-                    <td>Yes</td>
-                    <td>8</td>
-                    <td>Yes</td>
-                    <td>Yes</td>
-                    <td>Branson Linde</td>
-                    <td>Lipsum</td>
+                    <th>Loading...</th>
                 </tr>
             </tbody>
         </table>
+        <ul id="pagination-widget" class="pagination-med justify-content-center"></ul>
 
         <hr>
 
@@ -78,43 +49,7 @@
         </footer>
     </div>
 
-    <div class="modal fade" id="ownerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      This hasn't been implemented yet, but will show details about the owner!
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body">
-                          This hasn't been implemented yet, but will show details about the notes!
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <?php include("modals.php"); ?>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -123,5 +58,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
     <script src="../js/cats.js"></script>
+    <script src="../js/jquery.twbsPagination.min.js"></script>
   </body>
 </html>
